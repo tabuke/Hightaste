@@ -1,0 +1,34 @@
+# Hightaste Farm Management System
+
+Responsive React/Vite starter for farm registration, farmer records, verification status, payment-record tracking, and downloadable PDF receipts.
+
+## Features
+- Email/password sign-up and sign-in using Supabase Auth
+- Farm/farmer registration, search, edit, status review
+- Farm photo upload to Supabase Storage
+- Payment-record dashboard and PDF receipt generation
+- Responsive dashboard for mobile and desktop
+
+## Setup
+1. Create a Supabase project.
+2. In Supabase SQL Editor, run `supabase-schema.sql`.
+3. In Supabase Authentication settings, configure email confirmation as needed.
+4. Create your first account using the website. To let the app load data, add a row to `ht_farm_profiles` for that user in the SQL editor with role `staff`. Example:
+   ```sql
+   insert into public.ht_farm_profiles (user_id, display_name, role)
+   values ('YOUR_AUTH_USER_UUID', 'Workspace Staff', 'staff');
+   ```
+   Find the UUID in Authentication > Users. The current UI does not use role-based authorization yet; do not use this starter with real bank details until you tighten policies.
+5. Copy `.env.example` to `.env` locally and fill in the Supabase project URL and publishable/anon key.
+6. Install dependencies with `npm install`, then run `npm run dev`.
+7. For Vercel, import the GitHub repository and add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in Project Settings > Environment Variables, then deploy.
+
+## Security / production notes
+- This starter stores sensitive bank fields in the farm table. Do not collect real account numbers until you implement and test least-privilege database access, separate restricted bank data, MFA for admins, audit logging, backup and retention controls.
+- Current starter RLS policies are deliberately simple and are NOT suitable for a production system that handles personal/banking information. Restrict approval and update actions to verified admins through database policies or server-side functions.
+- The "record payment" button only inserts an internal record. It does not send money. A PDF receipt clearly states that it is not proof of bank transfer. Actual disbursements require a server-side integration with a licensed provider, idempotency, provider-side status verification and reconciliation.
+- The app uses private photo storage; the starter upload helper uses `getPublicUrl`, which is not suitable for private buckets. For production, replace with signed URLs or change the UI to store paths and request signed URLs through authenticated access. Photos may not render until this is implemented.
+- Use only with the consent of the farmers and authorization from the organisation responsible for paying them. Follow applicable Nigerian data protection requirements.
+
+## Deploy
+Push the project to GitHub, import it in Vercel, configure the environment variables, and deploy.
